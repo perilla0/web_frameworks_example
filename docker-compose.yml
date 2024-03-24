@@ -1,0 +1,488 @@
+# https://docs.docker.com/compose/gettingstarted/
+
+version: '3.9'
+
+services:
+
+# ------------------------------------------------------------------------------------------------------
+# web
+# ------------------------------------------------------------------------------------------------------
+
+  nginx.web.backend:
+    container_name: nginx.web.backend
+    hostname: nginx.web.backend
+    image: ${PROJECT_NAME}_nginx.web.backend
+    build:
+      context: ./docker/nginx.web.backend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./docker/nginx.web.backend/conf.d
+        target: /etc/nginx/conf.d
+      - type: bind
+        source: ./src/laravel.app.backend
+        target: /var/www/laravel.app.backend
+      - type: bind
+        source: ./src/rails.app.backend
+        target: /var/www/rails.app.backend
+      - type: bind
+        source: ./src/django.app.backend
+        target: /var/www/django.app.backend
+      - type: bind
+        source: ./src/echo.app.backend
+        target: /var/www/echo.app.backend
+    depends_on:
+      - laravel.app.backend
+      - rails.app.backend
+      - django.app.backend
+      - echo.app.backend
+    ports:
+      - 58000:58000
+      - 58010:58010
+      - 58020:58020
+      - 58030:58030
+    networks:
+      default:
+
+  nginx.web.frontend:
+    container_name: nginx.web.frontend
+    hostname: nginx.web.frontend
+    image: ${PROJECT_NAME}_nginx.web.frontend
+    build:
+      context: ./docker/nginx.web.frontend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./docker/nginx.web.frontend/conf.d
+        target: /etc/nginx/conf.d
+    depends_on:
+      - react-ts.client.apollo.app.frontend
+      - ts.next.app.frontend
+      - ts.nuxt.app.frontend
+      - kit.svelte.app.frontend
+    ports:
+      - 80:80
+      - 443:443
+      - 8010:8010
+      - 8020:8020
+      - 8030:8030
+    networks:
+      default:
+
+# ------------------------------------------------------------------------------------------------------
+# app.backend
+# ------------------------------------------------------------------------------------------------------
+
+  laravel.app.backend:
+    container_name: laravel.app.backend
+    hostname: laravel.app.backend
+    image: ${PROJECT_NAME}_laravel.app.backend
+    build:
+      context: ./docker/laravel.app.backend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        # nginx.web.backendとtargetのパスを合わせないと「File Not Found」になる。
+        source: ./src/laravel.app.backend
+        target: /var/www/laravel.app.backend
+      - type: bind
+        source: ./docker/laravel.app.backend/php.ini
+        target: /usr/local/etc/php/php.ini
+    networks:
+      default:
+    # ports:
+    #   - 9000:9000
+
+  cron.laravel.app.backend:
+    container_name: cron.laravel.app.backend
+    hostname: cron.laravel.app.backend
+    image: ${PROJECT_NAME}_laravel.app.backend
+    environment:
+      TZ: ${TZ}
+    command: cron -f
+    volumes:
+      - type: bind
+        source: ./src/laravel.app.backend
+        target: /var/www/laravel.app.backend
+      - type: bind
+        source: ./docker/laravel.app.backend/php.ini
+        target: /usr/local/etc/php/php.ini
+      - type: bind
+        source: ./docker/laravel.app.backend/etc/cron.d
+        target: /etc/cron.d/
+    depends_on:
+      - laravel.app.backend
+    networks:
+      default:
+
+  queue.laravel.app.backend:
+    container_name: queue.laravel.app.backend
+    hostname: queue.laravel.app.backend
+    image: ${PROJECT_NAME}_laravel.app.backend
+    environment:
+      TZ: ${TZ}
+    command: /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+    volumes:
+      - type: bind
+        source: ./src/laravel.app.backend
+        target: /var/www/laravel.app.backend
+      - type: bind
+        source: ./docker/laravel.app.backend/php.ini
+        target: /usr/local/etc/php/php.ini
+      - type: bind
+        source: ./docker/laravel.app.backend/etc/supervisor/supervisord.conf
+        target: /etc/supervisor/supervisord.conf
+      - type: bind
+        source: ./docker/laravel.app.backend/etc/supervisor/conf.d
+        target: /etc/supervisor/conf.d
+    depends_on:
+      - laravel.app.backend
+      - redis.db
+    networks:
+      default:
+
+  rails.app.backend:
+    container_name: rails.app.backend
+    hostname: rails.app.backend
+    image: ${PROJECT_NAME}_rails.app.backend
+    build:
+      context: ./docker/rails.app.backend
+      dockerfile: Dockerfile
+      args:
+        RUBY_VERSION: ${RUBY_VERSION}
+        RAILS_VERSION: ${RAILS_VERSION}
+        RAILS_NEW_OPTION: ${RAILS_NEW_OPTION}
+    command: rails server -b 0.0.0.0 -p 9010
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./src/rails.app.backend
+        target: /app/src
+    networks:
+      default:
+    # ports:
+    #   - 9010:9010
+
+  django.app.backend:
+    container_name: django.app.backend
+    hostname: django.app.backend
+    image: ${PROJECT_NAME}_django.app.backend
+    build:
+      context: ./docker/django.app.backend
+      dockerfile: Dockerfile
+    command: gunicorn -b 0.0.0.0:9020 --workers 5 config.wsgi
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./src/django.app.backend
+        target: /app/src
+    networks:
+      default:
+    # ports:
+    #   - 9020:9020
+
+  echo.app.backend:
+    container_name: echo.app.backend
+    hostname: echo.app.backend
+    image: ${PROJECT_NAME}_echo.app.backend
+    build:
+      context: ./docker/echo.app.backend
+      dockerfile: Dockerfile
+    command: go run server.go
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./src/echo.app.backend
+        target: /app/src
+    networks:
+      default:
+    # ports:
+    #   - 9030:9030
+
+# ------------------------------------------------------------------------------------------------------
+# app.frontend
+# ------------------------------------------------------------------------------------------------------
+
+  # https://github.com/nodejs/docker-node
+  react-ts.client.apollo.app.frontend:
+    container_name: react-ts.client.apollo.app.frontend
+    hostname: react-ts.client.apollo.app.frontend
+    image: ${PROJECT_NAME}_react-ts.client.apollo.app.frontend
+    build:
+      context: ./docker/react-ts.client.apollo.app.frontend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+      NODE_ENV: development
+    volumes:
+      - type: bind
+        source: ./src/react-ts.client.apollo.app.frontend
+        target: /home/node/app
+    command: "npm run dev -- --host 0.0.0.0 --port 4000"
+    networks:
+      default:
+    # ports:
+    #   - 4000:4000
+
+  ts.next.app.frontend:
+    container_name: ts.next.app.frontend
+    hostname: ts.next.app.frontend
+    image: ${PROJECT_NAME}_ts.next.app.frontend
+    build:
+      context: ./docker/ts.next.app.frontend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+      NODE_ENV: development
+    volumes:
+      - type: bind
+        source: ./src/ts.next.app.frontend
+        target: /home/node/app
+    command: "npm run dev -- -H 0.0.0.0 -p 4010"
+    networks:
+      default:
+    # ports:
+    #   - 4010:4010
+
+  ts.nuxt.app.frontend:
+    container_name: ts.nuxt.app.frontend
+    hostname: ts.nuxt.app.frontend
+    image: ${PROJECT_NAME}_ts.nuxt.app.frontend
+    build:
+      context: ./docker/ts.nuxt.app.frontend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+      NODE_ENV: development
+    volumes:
+      - type: bind
+        source: ./src/ts.nuxt.app.frontend
+        target: /home/node/app
+    command: "npm run dev -- --host 0.0.0.0 --port 4020"
+    networks:
+      default:
+    # ports:
+    #   - 4020:4020
+
+  kit.svelte.app.frontend:
+    container_name: kit.svelte.app.frontend
+    hostname: kit.svelte.app.frontend
+    image: ${PROJECT_NAME}_kit.svelte.app.frontend
+    build:
+      context: ./docker/kit.svelte.app.frontend
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+      NODE_ENV: development
+    volumes:
+      - type: bind
+        source: ./src/kit.svelte.app.frontend
+        target: /home/node/app
+    command: "npm run dev -- --host 0.0.0.0 --port 4030"
+    networks:
+      default:
+    # ports:
+    #   - 4030:4030
+
+# ------------------------------------------------------------------------------------------------------
+# db
+# ------------------------------------------------------------------------------------------------------
+
+  pgsql.db:
+    container_name: pgsql.db
+    hostname: pgsql.db
+    image: ${PROJECT_NAME}_pgsql.db
+    build:
+      context: ./docker/pgsql.db
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASS: password
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --locale=C
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./docker/pgsql.db/initdb.d
+        target: /docker-entrypoint-initdb.d
+      - type: volume
+        source: volume.pgsql.db
+        target: /var/lib/postgresql/data
+    networks:
+      default:
+    ports:
+      - 5432:5432
+
+  mysql.db:
+    container_name: mysql.db
+    hostname: mysql.db
+    image: ${PROJECT_NAME}_mysql.db
+    build:
+      context: ./docker/mysql.db
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - type: bind
+        source: ./docker/mysql.db/conf.d
+        target: /etc/my.cnf.d/
+      - type: bind
+        source: ./docker/mysql.db/initdb.d
+        target: /docker-entrypoint-initdb.d
+      - type: volume
+        source: volume.mysql.db
+        target: /var/lib/mysql
+    networks:
+      default:
+    ports:
+      - 3306:3306
+  
+  redis.db:
+    container_name: redis.db
+    hostname: redis.db
+    image: redis:latest
+    volumes:
+      - type: volume
+        source: volume.redis.db
+        target: /data
+    networks:
+      default:
+    ports:
+      - 6379:6379
+  
+  memcached.db:
+    container_name: memcached.db
+    hostname: memcached.db
+    image: memcached:latest
+    networks:
+      default:
+    ports:
+      - 11211:11211
+
+  mongo.db:
+    container_name: mongo.db
+    hostname: mongo.db
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - type: bind
+        source: ./docker/mongo.db/conf.d
+        target: /etc/mongo
+      - type: volume
+        source: volume.mongo.db
+        target: /data/db
+    networks:
+      default:
+    ports:
+      - 27017:27017
+
+# ------------------------------------------------------------------------------------------------------
+# tool
+# ------------------------------------------------------------------------------------------------------
+
+  admin.pgsql.db.tool:
+    container_name: admin.pgsql.db.tool
+    hostname: admin.pgsql.db.tool
+    image: dpage/pgadmin4
+    environment:
+        PGADMIN_DEFAULT_EMAIL: admin@example.com
+        PGADMIN_DEFAULT_PASSWORD: password
+        PGADMIN_CONFIG_DEBUG: 1
+        PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 40
+        PGADMIN_CONFIG_FILE_LOG_LEVEL: 40
+    volumes:
+      - type: volume
+        source: volume.admin.pgsql.db.tool
+        target: /var/lib/pgadmin
+    depends_on:
+      - pgsql.db
+    networks:
+      default:
+    ports:
+      - 50010:80
+
+  admin.mysql.db.tool:
+    container_name: admin.mysql.db.tool
+    hostname: admin.mysql.db.tool
+    image: phpmyadmin:5.2
+    environment:
+      PMA_HOSTS: mysql.db
+      PMA_ARBITRARY: -1
+    depends_on:
+      - mysql.db
+    ports:
+      - 50020:80
+    networks:
+      default:
+
+  admin.redis.db.tool:
+    container_name: admin.redis.db.tool
+    hostname: admin.redis.db.tool
+    image: redislabs/redisinsight:latest
+    volumes:
+      - type: volume
+        source: volume.admin.redis.db.tool
+        target: /db
+    depends_on:
+      - redis.db
+    ports:
+      - 50030:8001
+    networks:
+      default:
+
+  admin.mongo.db.tool:
+    container_name: admin.mongo.db.tool
+    hostname: admin.mongo.db.tool
+    image: mongo-express:latest
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://root:password@mongo.db:27017/
+    depends_on:
+      - mongo.db
+    ports:
+      - 50040:8081
+    networks:
+      default:
+
+  mailpit.mail.tool:
+    container_name: mailpit.mail.tool
+    hostname: mailpit.mail.tool
+    image: 'axllent/mailpit:latest'
+    environment:
+      MP_DATA_FILE: /data/mailpit.db
+    volumes:
+      - type: volume
+        source: volume.mailpit.mail.tool
+        target: /data
+    networks:
+      default:
+    ports:
+      - 1025:1025
+      - 50050:8025
+
+volumes:
+  volume.pgsql.db:
+  volume.mysql.db:
+  volume.redis.db:
+  volume.mongo.db:
+  volume.admin.pgsql.db.tool:
+  volume.admin.redis.db.tool:
+  volume.mailpit.mail.tool:
+
+networks:
+  default:
+    name: ${PROJECT_NAME}_backend
+    driver: bridge
