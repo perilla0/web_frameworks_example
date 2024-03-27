@@ -13,8 +13,8 @@ services:
     hostname: nginx.web.backend
     image: ${PROJECT_NAME}_nginx.web.backend
     build:
-      context: ./docker/nginx.web.backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/nginx.web.backend/Dockerfile
     environment:
       TZ: ${TZ}
     volumes:
@@ -51,8 +51,8 @@ services:
     hostname: nginx.web.frontend
     image: ${PROJECT_NAME}_nginx.web.frontend
     build:
-      context: ./docker/nginx.web.frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/nginx.web.frontend/Dockerfile
     environment:
       TZ: ${TZ}
     volumes:
@@ -82,8 +82,8 @@ services:
     hostname: laravel.app.backend
     image: ${PROJECT_NAME}_laravel.app.backend
     build:
-      context: ./docker/laravel.app.backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/laravel.app.backend/Dockerfile
     environment:
       TZ: ${TZ}
     volumes:
@@ -152,8 +152,8 @@ services:
     hostname: rails.app.backend
     image: ${PROJECT_NAME}_rails.app.backend
     build:
-      context: ./docker/rails.app.backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/rails.app.backend/Dockerfile
       args:
         RUBY_VERSION: ${RUBY_VERSION}
         RAILS_VERSION: ${RAILS_VERSION}
@@ -175,8 +175,8 @@ services:
     hostname: django.app.backend
     image: ${PROJECT_NAME}_django.app.backend
     build:
-      context: ./docker/django.app.backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/django.app.backend/Dockerfile
     command: gunicorn -b 0.0.0.0:9020 --workers 5 config.wsgi
     environment:
       TZ: ${TZ}
@@ -194,8 +194,8 @@ services:
     hostname: echo.app.backend
     image: ${PROJECT_NAME}_echo.app.backend
     build:
-      context: ./docker/echo.app.backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/echo.app.backend/Dockerfile
     command: go run server.go
     environment:
       TZ: ${TZ}
@@ -218,8 +218,8 @@ services:
     hostname: react-ts.client.apollo.app.frontend
     image: ${PROJECT_NAME}_react-ts.client.apollo.app.frontend
     build:
-      context: ./docker/react-ts.client.apollo.app.frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/react-ts.client.apollo.app.frontend/Dockerfile
     environment:
       TZ: ${TZ}
       NODE_ENV: development
@@ -238,8 +238,8 @@ services:
     hostname: ts.next.app.frontend
     image: ${PROJECT_NAME}_ts.next.app.frontend
     build:
-      context: ./docker/ts.next.app.frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/ts.next.app.frontend/Dockerfile
     environment:
       TZ: ${TZ}
       NODE_ENV: development
@@ -258,8 +258,8 @@ services:
     hostname: ts.nuxt.app.frontend
     image: ${PROJECT_NAME}_ts.nuxt.app.frontend
     build:
-      context: ./docker/ts.nuxt.app.frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/ts.nuxt.app.frontend/Dockerfile
     environment:
       TZ: ${TZ}
       NODE_ENV: development
@@ -278,8 +278,8 @@ services:
     hostname: kit.svelte.app.frontend
     image: ${PROJECT_NAME}_kit.svelte.app.frontend
     build:
-      context: ./docker/kit.svelte.app.frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/kit.svelte.app.frontend/Dockerfile
     environment:
       TZ: ${TZ}
       NODE_ENV: development
@@ -302,8 +302,8 @@ services:
     hostname: pgsql.db
     image: ${PROJECT_NAME}_pgsql.db
     build:
-      context: ./docker/pgsql.db
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/pgsql.db/Dockerfile
     environment:
       POSTGRES_USER: root
       POSTGRES_PASS: password
@@ -327,8 +327,8 @@ services:
     hostname: mysql.db
     image: ${PROJECT_NAME}_mysql.db
     build:
-      context: ./docker/mysql.db
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/mysql.db/Dockerfile
     environment:
       TZ: ${TZ}
       MYSQL_ROOT_PASSWORD: password

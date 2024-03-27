@@ -32,7 +32,14 @@ RUN bundle install
 WORKDIR /app/src
 RUN chmod -R 0777 .
 
-COPY entrypoint.sh /usr/bin/
+# プロジェクトフォルダ作成済みで、Gemfileが存在する
+ADD ./src/rails.app.backend  .
+RUN if [ -f Gemfile ]; then \
+        bundle install; \
+    fi;
+
+# COPY entrypoint.sh /usr/bin/
+COPY ./docker/rails.app.backend/entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
