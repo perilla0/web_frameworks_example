@@ -4,7 +4,7 @@ RUN rm -f /etc/nginx/conf.d/*
 
 RUN mkdir -p /etc/nginx/ssl && chmod -R 0777 /etc/nginx/ssl
 
-COPY csr.conf /etc/nginx/ssl/
+COPY ./docker/nginx.web.backend/csr.conf /etc/nginx/ssl/
 
 RUN openssl genrsa -out /etc/nginx/ssl/server.key 2048
 RUN openssl req -new -config /etc/nginx/ssl/csr.conf -key /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.csr

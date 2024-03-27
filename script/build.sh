@@ -2,5 +2,5 @@
 cd `dirname $0`
 cd ../
 
-docker compose down
-docker compose build
+docker compose down --rmi all
+docker compose build --no-cache
