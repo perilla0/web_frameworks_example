@@ -61,7 +61,7 @@ services:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./docker/nginx.web.frontend/env/${EX_ENV}/conf.d
+        source: ./services/nginx.web.frontend/env/${EX_ENV}/conf.d
         target: /etc/nginx/conf.d
     depends_on:
       - react-ts.client.apollo.app.frontend
