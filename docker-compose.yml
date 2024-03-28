@@ -13,25 +13,27 @@ services:
     hostname: nginx.web.backend
     image: ${PROJECT_NAME}_nginx.web.backend
     build:
-      context: .
-      dockerfile: ./docker/nginx.web.backend/Dockerfile
+      context: ./services/nginx.web.backend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./docker/nginx.web.backend/conf.d
+        source: ./services/nginx.web.backend/env/${EX_ENV}/conf.d
         target: /etc/nginx/conf.d
       - type: bind
-        source: ./src/laravel.app.backend
+        source: ./services/laravel.app.backend/src
         target: /var/www/laravel.app.backend
       - type: bind
-        source: ./src/rails.app.backend
+        source: ./services/rails.app.backend/src
         target: /var/www/rails.app.backend
       - type: bind
-        source: ./src/django.app.backend
+        source: ./services/django.app.backend/src
         target: /var/www/django.app.backend
       - type: bind
-        source: ./src/echo.app.backend
+        source: ./services/echo.app.backend/src
         target: /var/www/echo.app.backend
     depends_on:
       - laravel.app.backend
@@ -51,13 +53,15 @@ services:
     hostname: nginx.web.frontend
     image: ${PROJECT_NAME}_nginx.web.frontend
     build:
-      context: .
-      dockerfile: ./docker/nginx.web.frontend/Dockerfile
+      context: ./services/nginx.web.frontend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./docker/nginx.web.frontend/conf.d
+        source: ./services/nginx.web.frontend/env/${EX_ENV}/conf.d
         target: /etc/nginx/conf.d
     depends_on:
       - react-ts.client.apollo.app.frontend
@@ -82,17 +86,19 @@ services:
     hostname: laravel.app.backend
     image: ${PROJECT_NAME}_laravel.app.backend
     build:
-      context: .
-      dockerfile: ./docker/laravel.app.backend/Dockerfile
+      context: ./services/laravel.app.backend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
     volumes:
       - type: bind
         # nginx.web.backendとtargetのパスを合わせないと「File Not Found」になる。
-        source: ./src/laravel.app.backend
+        source: ./services/laravel.app.backend/src
         target: /var/www/laravel.app.backend
       - type: bind
-        source: ./docker/laravel.app.backend/php.ini
+        source: ./services/laravel.app.backend/env/${EX_ENV}/php.ini
         target: /usr/local/etc/php/php.ini
     networks:
       default:
@@ -108,13 +114,13 @@ services:
     command: cron -f
     volumes:
       - type: bind
-        source: ./src/laravel.app.backend
+        source: ./services/laravel.app.backend/src
         target: /var/www/laravel.app.backend
       - type: bind
-        source: ./docker/laravel.app.backend/php.ini
+        source: ./services/laravel.app.backend/env/${EX_ENV}/php.ini
         target: /usr/local/etc/php/php.ini
       - type: bind
-        source: ./docker/laravel.app.backend/etc/cron.d
+        source: ./services/laravel.app.backend/env/${EX_ENV}/etc/cron.d
         target: /etc/cron.d/
     depends_on:
       - laravel.app.backend
@@ -130,16 +136,16 @@ services:
     command: /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
     volumes:
       - type: bind
-        source: ./src/laravel.app.backend
+        source: ./services/laravel.app.backend/src
         target: /var/www/laravel.app.backend
       - type: bind
-        source: ./docker/laravel.app.backend/php.ini
+        source: ./services/laravel.app.backend/env/${EX_ENV}/php.ini
         target: /usr/local/etc/php/php.ini
       - type: bind
-        source: ./docker/laravel.app.backend/etc/supervisor/supervisord.conf
+        source: ./services/laravel.app.backend/env/${EX_ENV}/etc/supervisor/supervisord.conf
         target: /etc/supervisor/supervisord.conf
       - type: bind
-        source: ./docker/laravel.app.backend/etc/supervisor/conf.d
+        source: ./services/laravel.app.backend/env/${EX_ENV}/etc/supervisor/conf.d
         target: /etc/supervisor/conf.d
     depends_on:
       - laravel.app.backend
@@ -152,9 +158,10 @@ services:
     hostname: rails.app.backend
     image: ${PROJECT_NAME}_rails.app.backend
     build:
-      context: .
-      dockerfile: ./docker/rails.app.backend/Dockerfile
+      context: ./services/rails.app.backend
+      dockerfile: ./docker/Dockerfile
       args:
+        EX_ENV: ${EX_ENV}
         RUBY_VERSION: ${RUBY_VERSION}
         RAILS_VERSION: ${RAILS_VERSION}
         RAILS_NEW_OPTION: ${RAILS_NEW_OPTION}
@@ -163,7 +170,7 @@ services:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./src/rails.app.backend
+        source: ./services/rails.app.backend/src
         target: /app/src
     networks:
       default:
@@ -175,14 +182,16 @@ services:
     hostname: django.app.backend
     image: ${PROJECT_NAME}_django.app.backend
     build:
-      context: .
-      dockerfile: ./docker/django.app.backend/Dockerfile
+      context: ./services/django.app.backend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     command: gunicorn -b 0.0.0.0:9020 --workers 5 config.wsgi
     environment:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./src/django.app.backend
+        source: ./services/django.app.backend/src
         target: /app/src
     networks:
       default:
@@ -194,14 +203,16 @@ services:
     hostname: echo.app.backend
     image: ${PROJECT_NAME}_echo.app.backend
     build:
-      context: .
-      dockerfile: ./docker/echo.app.backend/Dockerfile
+      context: ./services/echo.app.backend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     command: go run server.go
     environment:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./src/echo.app.backend
+        source: ./services/echo.app.backend/src
         target: /app/src
     networks:
       default:
@@ -218,14 +229,16 @@ services:
     hostname: react-ts.client.apollo.app.frontend
     image: ${PROJECT_NAME}_react-ts.client.apollo.app.frontend
     build:
-      context: .
-      dockerfile: ./docker/react-ts.client.apollo.app.frontend/Dockerfile
+      context: ./services/react-ts.client.apollo.app.frontend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
       NODE_ENV: development
     volumes:
       - type: bind
-        source: ./src/react-ts.client.apollo.app.frontend
+        source: ./services/react-ts.client.apollo.app.frontend/src
         target: /home/node/app
     command: "npm run dev -- --host 0.0.0.0 --port 4000"
     networks:
@@ -238,14 +251,16 @@ services:
     hostname: ts.next.app.frontend
     image: ${PROJECT_NAME}_ts.next.app.frontend
     build:
-      context: .
-      dockerfile: ./docker/ts.next.app.frontend/Dockerfile
+      context: ./services/ts.next.app.frontend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
       NODE_ENV: development
     volumes:
       - type: bind
-        source: ./src/ts.next.app.frontend
+        source: ./services/ts.next.app.frontend/src
         target: /home/node/app
     command: "npm run dev -- -H 0.0.0.0 -p 4010"
     networks:
@@ -258,14 +273,16 @@ services:
     hostname: ts.nuxt.app.frontend
     image: ${PROJECT_NAME}_ts.nuxt.app.frontend
     build:
-      context: .
-      dockerfile: ./docker/ts.nuxt.app.frontend/Dockerfile
+      context: ./services/ts.nuxt.app.frontend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
       NODE_ENV: development
     volumes:
       - type: bind
-        source: ./src/ts.nuxt.app.frontend
+        source: ./services/ts.nuxt.app.frontend/src
         target: /home/node/app
     command: "npm run dev -- --host 0.0.0.0 --port 4020"
     networks:
@@ -278,14 +295,16 @@ services:
     hostname: kit.svelte.app.frontend
     image: ${PROJECT_NAME}_kit.svelte.app.frontend
     build:
-      context: .
-      dockerfile: ./docker/kit.svelte.app.frontend/Dockerfile
+      context: ./services/kit.svelte.app.frontend
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
       NODE_ENV: development
     volumes:
       - type: bind
-        source: ./src/kit.svelte.app.frontend
+        source: ./services/kit.svelte.app.frontend/src
         target: /home/node/app
     command: "npm run dev -- --host 0.0.0.0 --port 4030"
     networks:
@@ -302,8 +321,10 @@ services:
     hostname: pgsql.db
     image: ${PROJECT_NAME}_pgsql.db
     build:
-      context: .
-      dockerfile: ./docker/pgsql.db/Dockerfile
+      context: ./services/pgsql.db
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       POSTGRES_USER: root
       POSTGRES_PASS: password
@@ -312,7 +333,7 @@ services:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./docker/pgsql.db/initdb.d
+        source: ./services/pgsql.db/env/${EX_ENV}/initdb.d
         target: /docker-entrypoint-initdb.d
       - type: volume
         source: volume.pgsql.db
@@ -327,17 +348,19 @@ services:
     hostname: mysql.db
     image: ${PROJECT_NAME}_mysql.db
     build:
-      context: .
-      dockerfile: ./docker/mysql.db/Dockerfile
+      context: ./services/mysql.db
+      dockerfile: ./docker/Dockerfile
+      args:
+        EX_ENV: ${EX_ENV}
     environment:
       TZ: ${TZ}
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - type: bind
-        source: ./docker/mysql.db/conf.d
+        source: ./services/mysql.db/env/${EX_ENV}/conf.d
         target: /etc/my.cnf.d/
       - type: bind
-        source: ./docker/mysql.db/initdb.d
+        source: ./services/mysql.db/env/${EX_ENV}/initdb.d
         target: /docker-entrypoint-initdb.d
       - type: volume
         source: volume.mysql.db
@@ -378,7 +401,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - type: bind
-        source: ./docker/mongo.db/conf.d
+        source: ./services/mongo.db/env/${EX_ENV}/conf.d
         target: /etc/mongo
       - type: volume
         source: volume.mongo.db
