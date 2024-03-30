@@ -223,6 +223,9 @@ services:
       - type: bind
         source: ./services/echo.app.backend/src
         target: /app/src
+      - type: bind
+        source: ./services/echo.app.backend/depend
+        target: /depend
     networks:
       default:
     # ports:
