@@ -100,6 +100,9 @@ services:
       - type: bind
         source: ./services/laravel.app.backend/env/${EX_ENV}/php.ini
         target: /usr/local/etc/php/php.ini
+      - type: bind
+        source: ./services/laravel.app.backend/depend
+        target: /depend
     networks:
       default:
     # ports:
@@ -172,6 +175,9 @@ services:
       - type: bind
         source: ./services/rails.app.backend/src
         target: /app/src
+      - type: bind
+        source: ./services/rails.app.backend/depend
+        target: /depend
     networks:
       default:
     # ports:
@@ -193,6 +199,12 @@ services:
       - type: bind
         source: ./services/django.app.backend/src
         target: /app/src
+      - type: bind
+        source: ./services/django.app.backend/depend
+        target: /depend
+      - type: bind
+        source: ./services/django.app.backend/env/${EX_ENV}/requirements.txt
+        target: /depend_def/requirements.txt
     networks:
       default:
     # ports:
@@ -214,6 +226,9 @@ services:
       - type: bind
         source: ./services/echo.app.backend/src
         target: /app/src
+      - type: bind
+        source: ./services/echo.app.backend/depend
+        target: /depend
     networks:
       default:
     # ports:
@@ -240,6 +255,9 @@ services:
       - type: bind
         source: ./services/react-ts.client.apollo.app.frontend/src
         target: /home/node/app
+      - type: bind
+        source: ./services/react-ts.client.apollo.app.frontend/depend
+        target: /depend
     command: "npm run dev -- --host 0.0.0.0 --port 4000"
     networks:
       default:
@@ -262,6 +280,9 @@ services:
       - type: bind
         source: ./services/ts.next.app.frontend/src
         target: /home/node/app
+      - type: bind
+        source: ./services/ts.next.app.frontend/depend
+        target: /depend
     command: "npm run dev -- -H 0.0.0.0 -p 4010"
     networks:
       default:
@@ -284,6 +305,9 @@ services:
       - type: bind
         source: ./services/ts.nuxt.app.frontend/src
         target: /home/node/app
+      - type: bind
+        source: ./services/ts.nuxt.app.frontend/depend
+        target: /depend
     command: "npm run dev -- --host 0.0.0.0 --port 4020"
     networks:
       default:
@@ -306,6 +330,9 @@ services:
       - type: bind
         source: ./services/kit.svelte.app.frontend/src
         target: /home/node/app
+      - type: bind
+        source: ./services/kit.svelte.app.frontend/depend
+        target: /depend
     command: "npm run dev -- --host 0.0.0.0 --port 4030"
     networks:
       default:

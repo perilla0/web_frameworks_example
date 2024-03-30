@@ -5,7 +5,6 @@ go 1.22.1
 require (
 	github.com/99designs/gqlgen v0.17.45
 	github.com/labstack/echo/v4 v4.11.4
-	github.com/vektah/gqlparser/v2 v2.5.11
 )
 
 require (
@@ -23,6 +22,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
+	github.com/vektah/gqlparser/v2 v2.5.11 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/mod v0.16.0 // indirect
