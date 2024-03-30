@@ -7,25 +7,16 @@ ARG EX_ENV=""
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# ビルド用ディレクトリを作成し、requirements.txtを配置
-# RUN mkdir -p /build && chmod -R 0777 /build
-# WORKDIR /build
-# COPY ./env/${EX_ENV}/requirements.txt /build
+# 依存パッケージ作業ディレクトリ
+RUN mkdir -p /depend && chmod -R 0777 /depend
 
-# WORKDIR作成
+# requirements.txt
+WORKDIR /depend_def
+RUN chmod -R 0777 /depend_def
+ADD ./env/${EX_ENV}/requirements.txt /depend_def
+RUN pip install -r requirements.txt
+
+# プロジェクトディレクトリ
 WORKDIR /app/src
-
 RUN chmod -R 0777 . \
     && mkdir -p public && chmod -R 0777 public
-
-# プロジェクトフォルダのbind
-ADD ./src .
-
-# プロジェクトフォルダ内にrequirements.txtが存在しない場合のみコピー
-# RUN if [ ! -f requirements.txt ]; then \
-#         cp /build/requirements.txt . ; \
-#     fi;
-
-ADD ./env/${EX_ENV}/requirements.txt .
-
-RUN pip install -r requirements.txt

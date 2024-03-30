@@ -193,6 +193,12 @@ services:
       - type: bind
         source: ./services/django.app.backend/src
         target: /app/src
+      - type: bind
+        source: ./services/django.app.backend/depend
+        target: /depend
+      - type: bind
+        source: ./services/django.app.backend/env/${EX_ENV}/requirements.txt
+        target: /depend_def/requirements.txt
     networks:
       default:
     # ports:
