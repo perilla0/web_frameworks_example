@@ -2,6 +2,9 @@ FROM php:8.3-fpm
 
 ARG EX_ENV=""
 
+# 依存パッケージ作業ディレクトリ
+RUN mkdir -p /depend && chmod -R 0777 /depend
+
 RUN apt-get update \
     && apt-get install -y \
         libzip-dev \
