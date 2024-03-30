@@ -9,6 +9,9 @@ ARG EX_ENV=""
 ARG RAILS_VERSION=""
 ARG RAILS_NEW_OPTION=""
 
+# 依存パッケージ作業ディレクトリ
+RUN mkdir -p /depend && chmod -R 0777 /depend
+
 # ビルド用ディレクトリ
 WORKDIR /build/rails/${RAILS_VERSION}
 RUN chmod -R 0777 .
@@ -33,7 +36,7 @@ RUN bundle install
 WORKDIR /app/src
 RUN chmod -R 0777 .
 
-# プロジェクトフォルダ作成済みで、Gemfileが存在する
+# プロジェクト作成済みでGemfileが存在する
 ADD ./src  .
 RUN if [ -f Gemfile ]; then \
         bundle install; \

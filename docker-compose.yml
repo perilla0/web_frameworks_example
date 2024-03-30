@@ -172,6 +172,9 @@ services:
       - type: bind
         source: ./services/rails.app.backend/src
         target: /app/src
+      - type: bind
+        source: ./services/rails.app.backend/depend
+        target: /depend
     networks:
       default:
     # ports:
