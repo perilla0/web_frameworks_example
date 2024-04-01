@@ -6,6 +6,8 @@
 
 以下のページを参照してください。  
 https://getbootstrap.jp/docs/5.3/getting-started/download/
+https://getbootstrap.jp/docs/5.3/getting-started/javascript/
+https://react-bootstrap.github.io/
 
 ## 1.1. 依存パッケージインストール
 

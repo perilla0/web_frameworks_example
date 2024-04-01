@@ -8,5 +8,5 @@ cd ../../../../
 
 
 docker compose run -u $(id -u):$(id -g) --rm ${DC_SERRVICE_NAME} bash -c "
-npm install bootstrap@5.3.0
+npm install react-bootstrap bootstrap
 "
