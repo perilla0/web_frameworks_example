@@ -37,7 +37,7 @@ function DisplayUsers() {
 export default function App() {
   return (
     <div>
-      <h2>My first Apollo app 🚀</h2>
+      <h2 className="text-3xl font-bold underline">My first Apollo app 🚀</h2>
       <br/>
       <DisplayUsers />
     </div>
