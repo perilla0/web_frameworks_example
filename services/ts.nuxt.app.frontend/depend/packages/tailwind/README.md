@@ -6,7 +6,7 @@
 # 1. インストール手順
 
 以下のページを参照してください。  
-https://tailwindcss.com/docs/guides/vite
+https://tailwindcss.com/docs/guides/nuxtjs
 
 ## 1.1. 依存パッケージインストール
 
