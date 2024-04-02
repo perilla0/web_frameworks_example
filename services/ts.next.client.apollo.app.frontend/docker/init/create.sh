@@ -11,13 +11,11 @@ source .env
 mkdir -p ./services/${DC_SERRVICE_NAME}/src
 
 docker compose run -u $(id -u):$(id -g) --rm ${DC_SERRVICE_NAME} bash -c "
-npm create vite@latest . -- --template react-ts
+npx create-next-app@latest . --no-src-dir --app
 npm install @apollo/client graphql
 "
 
 # オリジナルをバックアップ
-cp ./services/${DC_SERRVICE_NAME}/src/src/main.tsx ./services/${DC_SERRVICE_NAME}/src/src/main.origin.tsx
-cp ./services/${DC_SERRVICE_NAME}/src/src/App.tsx ./services/${DC_SERRVICE_NAME}/src/src/App.origin.tsx
+cp ./services/${DC_SERRVICE_NAME}/src/app/page.tsx ./services/${DC_SERRVICE_NAME}/src/app/page.origin.tsx
 # 差し替え
-cp ./services/${DC_SERRVICE_NAME}/docker/init/copy/main.tsx ./services/${DC_SERRVICE_NAME}/src/src/main.tsx
-cp ./services/${DC_SERRVICE_NAME}/docker/init/copy/App.tsx ./services/${DC_SERRVICE_NAME}/src/src/App.tsx
+cp ./services/${DC_SERRVICE_NAME}/docker/init/copy/page.tsx ./services/${DC_SERRVICE_NAME}/src/app/page.tsx
