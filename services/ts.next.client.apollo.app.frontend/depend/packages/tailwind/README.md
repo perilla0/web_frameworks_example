@@ -11,7 +11,7 @@ https://tailwindcss.com/docs/guides/vite
 ## 1.1. 依存パッケージインストール
 
 ```sh
-cd services/react-ts.client.apollo.app.frontend/depend/packages/bootstrap
+cd services/ts.next.client.apollo.app.frontend/depend/packages/bootstrap
 ./add.sh
 ```
 
