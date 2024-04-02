@@ -11,7 +11,7 @@ source .env
 mkdir -p ./services/${DC_SERRVICE_NAME}/src
 
 docker compose run -u $(id -u):$(id -g) --rm ${DC_SERRVICE_NAME} bash -c "
-npx create-next-app@latest . --no-src-dir --app
+npx create-next-app@latest . --no-src-dir --no-tailwind --app
 npm install @apollo/client graphql
 "
 
