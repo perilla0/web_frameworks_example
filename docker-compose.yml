@@ -64,7 +64,7 @@ services:
         source: ./services/nginx.web.frontend/env/${EX_ENV}/conf.d
         target: /etc/nginx/conf.d
     depends_on:
-      - react-ts.client.apollo.app.frontend
+      - ts.next.client.apollo.app.frontend
       - ts.next.app.frontend
       - ts.nuxt.app.frontend
       - kit.svelte.app.frontend
@@ -239,12 +239,12 @@ services:
 # ------------------------------------------------------------------------------------------------------
 
   # https://github.com/nodejs/docker-node
-  react-ts.client.apollo.app.frontend:
-    container_name: react-ts.client.apollo.app.frontend
-    hostname: react-ts.client.apollo.app.frontend
-    image: ${PROJECT_NAME}_react-ts.client.apollo.app.frontend
+  ts.next.client.apollo.app.frontend:
+    container_name: ts.next.client.apollo.app.frontend
+    hostname: ts.next.client.apollo.app.frontend
+    image: ${PROJECT_NAME}_ts.next.client.apollo.app.frontend
     build:
-      context: ./services/react-ts.client.apollo.app.frontend
+      context: ./services/ts.next.client.apollo.app.frontend
       dockerfile: ./docker/Dockerfile
       args:
         EX_ENV: ${EX_ENV}
@@ -253,12 +253,12 @@ services:
       NODE_ENV: development
     volumes:
       - type: bind
-        source: ./services/react-ts.client.apollo.app.frontend/src
+        source: ./services/ts.next.client.apollo.app.frontend/src
         target: /home/node/app
       - type: bind
-        source: ./services/react-ts.client.apollo.app.frontend/depend
+        source: ./services/ts.next.client.apollo.app.frontend/depend
         target: /depend
-    command: "npm run dev -- --host 0.0.0.0 --port 4000"
+    command: "npm run dev -- -H 0.0.0.0 --port 4000"
     networks:
       default:
     # ports:

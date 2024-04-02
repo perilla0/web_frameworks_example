@@ -7,7 +7,7 @@ DC_SERVICE_NAMES=(
     'rails.app.backend'
     'django.app.backend'
     'echo.app.backend'
-    'react-ts.client.apollo.app.frontend'
+    'ts.next.client.apollo.app.frontend'
     'ts.next.app.frontend'
     'ts.nuxt.app.frontend'
     'kit.svelte.app.frontend'
