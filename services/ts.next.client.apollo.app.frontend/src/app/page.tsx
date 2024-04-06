@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Alert } from "flowbite-react";
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { useQuery, gql } from '@apollo/client';
@@ -81,6 +82,8 @@ export default function Home() {
           priority
         />
       </div>
+
+      <Alert color="info">Alert!</Alert>
 
       <ApolloProvider client={client}>
         <DisplayUsers />

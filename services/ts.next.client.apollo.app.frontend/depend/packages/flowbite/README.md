@@ -6,12 +6,12 @@
 # 1. インストール手順
 
 以下のページを参照してください。  
-https://tailwindcss.com/docs/guides/vite
+https://flowbite.com/docs/getting-started/next-js/
 
 ## 1.1. 依存パッケージインストール
 
 ```sh
-cd services/ts.next.client.apollo.app.frontend/depend/packages/tailwind
+cd services/ts.next.client.apollo.app.frontend/depend/packages/flowbite
 ./add.sh
 ```
 
@@ -20,27 +20,18 @@ cd services/ts.next.client.apollo.app.frontend/depend/packages/tailwind
 `tailwind.config.js`
 
 ```javascript
-/** @type {import('tailwindcss').Config} */
+/**
+ * @type {import('@types/tailwindcss/tailwind-config').TailwindConfig}
+ */
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
- 
-    // Or if using `src` directory:
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/flowbite-react/lib/**/*.js",
+    "./pages/**/*.{ts,tsx}",
+    "./public/**/*.html",
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-```
-
-`global.css`
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  plugins: [
+    require("flowbite/plugin")
+  ],
+  theme: {},
+};
 ```
