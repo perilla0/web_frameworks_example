@@ -1,0 +1,58 @@
+#backdrop {
+  display: none;
+  z-index: 30;
+}
+
+#header {
+  z-index: 50;
+}
+
+main {
+  z-index: 20;
+}
+
+#sidebar {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  transform: translateX(0px);
+  z-index: 40;
+}
+
+#mobile-sidebar-visible-toggle-button {
+  display: none;
+}
+
+@media (max-width: 767px) {
+
+  html:has(.mobile-sidebar-visible) {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #backdrop {
+    display: none;
+  }
+
+  #sidebar {
+    transform: translateX(-100%);
+  }
+
+  .mobile-sidebar-visible {
+
+    #backdrop {
+      display: block;
+    }
+  
+    #sidebar {
+      transform: translateX(0);
+    }
+
+  }
+
+  #mobile-sidebar-visible-toggle-button {
+    display: block;
+  }
+
+}
+
