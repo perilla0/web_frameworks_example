@@ -2,21 +2,10 @@
 
 import { createContext, useContext, useReducer } from 'react';
 
+import { ThemeConfig } from "@/component/client/ThemeConfig";
 import Theme from "@/component/client/Theme";
 
-const initialTheme =
-{
-  mobile: {
-    sidebar: {
-      visible: {
-        status: false,
-        className: 'mobile-sidebar-visible',
-      },
-    },
-  },
-};
-
-export const ThemeContext = createContext(initialTheme);
+export const ThemeContext = createContext(null);
 export const ThemeDispatchContext = createContext(null);
 
 export function useTheme() {
@@ -33,8 +22,20 @@ export function ThemeContextProvider({
 }>) {
 
   const [theme, dispatch] = useReducer(
-    themeReducer,
-    initialTheme,
+    (state, action) => {
+      console.log(state);
+      console.log(action);
+      switch (action.type) {
+        case 'changed': {
+          // https://ja.react.dev/reference/react/useReducer#ive-dispatched-an-action-but-the-screen-doesnt-update
+          return JSON.parse(JSON.stringify(state));
+        }
+        default: {
+          throw Error('Unknown action: ' + action.type);
+        }
+      }
+    },
+    ThemeConfig,
   );
 
   return (
@@ -44,18 +45,4 @@ export function ThemeContextProvider({
       </ThemeDispatchContext.Provider>
     </ThemeContext.Provider>
   );
-}
-
-function themeReducer(state, action) {
-  console.log(state);
-  console.log(action);
-  switch (action.type) {
-    case 'changed': {
-      // https://ja.react.dev/reference/react/useReducer#ive-dispatched-an-action-but-the-screen-doesnt-update
-      return JSON.parse(JSON.stringify(state));
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
 }
