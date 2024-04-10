@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Docker Compose サービス名
-DC_SERRVICE_NAME='echo.app.backend'
-
 cd `dirname $0`
-cd ../../../../
+source ../../../.service_env
+
+cd ../../../../../
 
 # https://gqlgen.com/getting-started/
 # スケルトンを作成

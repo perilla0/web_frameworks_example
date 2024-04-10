@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# Docker Compose サービス名
-DC_SERRVICE_NAME='ts.next.app.frontend'
-
 cd `dirname $0`
+source ../.service_env
+
 cd ../../../
 
 docker compose rm -s ${DC_SERRVICE_NAME}

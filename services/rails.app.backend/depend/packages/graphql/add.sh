@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Docker Compose サービス名
-DC_SERRVICE_NAME='rails.app.backend'
-
 cd `dirname $0`
-cd ../../../../
+source ../../../.service_env
+
+cd ../../../../../
 
 # bundle => root権限
 docker compose exec rails.app.backend bash -c "
