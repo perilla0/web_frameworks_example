@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Docker Compose サービス名
+DC_SERRVICE_NAME='nginx.web.frontend'
